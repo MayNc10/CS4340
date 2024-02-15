@@ -8,35 +8,40 @@ import pandas as pd
 import numpy as np
 
 #What is in this file?
-data = pd.read_csv("Data/iris_data.csv")
-print("Number of records is: ", len(data.index))  #How many rows of data
-print(" ")
-print(data.head())
-print(" ")
-#How many species do we have?
-print(data.pivot_table(index = "species", aggfunc="count")) 
-
+f = input("What is the name of the file? ")
+data = pd.read_csv(f)
 
 #Create a table of each type of Iris flowr
 Setosa = data[data.species == "setosa"]
 Versicolor = data[data.species == "versicolor"]
 Virginica = data[data.species == "virginica"]
 
-#Create scatter plots of sepal length vs petal length
-plt.scatter(Setosa["sepal_length"], Setosa["petal_length"], 
-            marker = "v", c = "red", label = "Setosa")
-plt.scatter(Versicolor["sepal_length"], Versicolor["petal_length"], 
-            marker = "x", c = "green", label = "Versicolor")
-plt.scatter(Virginica["sepal_length"], Virginica["petal_length"], 
-            c = "blue", label = "Virginica")
+# sepal_length
+# petal_length
 
-#Add plot lables
-plt.xlabel("Sepal Length")
-plt.ylabel("Petal Length")
-plt.title("Sepal vs Petal Length")
-plt.legend(loc = "upper left")
-plt.plot()
-#Save the plot
-#plt.savefig("P0.png")
+while True:
+    feature1 = input("What is the first feature you want to plot? ")
+    feature2 = input("What is the second feature you want to plot? ")
+
+    #Create scatter plots of sepal length vs petal length
+    plt.scatter(Setosa[feature1], Setosa[feature2], 
+                marker = "v", c = "red", label = "Setosa")
+    plt.scatter(Versicolor[feature1], Versicolor[feature2], 
+                marker = "x", c = "green", label = "Versicolor")
+    plt.scatter(Virginica[feature1], Virginica[feature2], 
+                c = "blue", label = "Virginica")
+
+    #Add plot lables
+    plt.xlabel(feature1)
+    plt.ylabel(feature2)
+    plt.title(feature1 + " vs " + feature2)
+    plt.legend(loc = "upper left")
+    plt.plot()
+    plt.show()
+    
+    if input("Do you want to continue? ") not in ["yes", "y", "YES"]:
+        break
+
+
 
  
