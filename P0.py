@@ -9,7 +9,7 @@ import numpy as np
 
 #What is in this file?
 f = input("What is the name of the file? ")
-data = pd.read_csv(f)
+data = pd.read_csv(f.strip())
 
 #Create a table of each type of Iris flowr
 Setosa = data[data.species == "setosa"]
@@ -20,26 +20,39 @@ Virginica = data[data.species == "virginica"]
 # petal_length
 
 while True:
-    feature1 = input("What is the first feature you want to plot? ")
-    feature2 = input("What is the second feature you want to plot? ")
+    print(data)
+    print(data.set_index('species'))
+    print("You can do a plot of any two features of the Iris Data set")
+
+    print("The feature codes are:")
+    print("   0 = sepal length")
+    print("   1 = sepal width")
+    print("   2 = petal length")
+    print("   3 = petal width")
+
+    feature1 = int(input("Enter feature code for the horizontal axis: "))
+    feature2 = int(input("Enter feature code for the vertical axis: "))
+
+    name1 = data.columns[feature1]
+    name2 = data.columns[feature2]
 
     #Create scatter plots of sepal length vs petal length
-    plt.scatter(Setosa[feature1], Setosa[feature2], 
+    plt.scatter(Setosa[name1], Setosa[name2], 
                 marker = "v", c = "red", label = "Setosa")
-    plt.scatter(Versicolor[feature1], Versicolor[feature2], 
+    plt.scatter(Versicolor[name1], Versicolor[name2], 
                 marker = "x", c = "green", label = "Versicolor")
-    plt.scatter(Virginica[feature1], Virginica[feature2], 
+    plt.scatter(Virginica[name1], Virginica[name2], 
                 c = "blue", label = "Virginica")
 
     #Add plot lables
-    plt.xlabel(feature1)
-    plt.ylabel(feature2)
-    plt.title(feature1 + " vs " + feature2)
-    plt.legend(loc = "upper left")
+    plt.xlabel(name1)
+    plt.ylabel(name2)
+    plt.title(name1 + " vs " + name2)
+    plt.legend(loc = "upper right")
     plt.plot()
     plt.show()
     
-    if input("Do you want to continue? ") not in ["yes", "y", "YES"]:
+    if input("Would you like to do another plot? (y/n) ") not in ["yes", "y", "YES"]:
         break
 
 
