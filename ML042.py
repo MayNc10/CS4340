@@ -44,7 +44,7 @@ def MSE(power, x, y, f):
         testing_MSEs.append(MSE)
     return testing_MSEs
         
-file = "Data/building_energy_consumption.csv"
+file = "Data/startup_growth_data.csv"
 data = pd.read_csv(file)
 x = np.array(data[data.columns[0]])
 Y = np.array(data[data.columns[-1]])
