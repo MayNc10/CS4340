@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-def standardize_column(X, idx):
+def standardize_column(x, idx):
+    X = np.copy(x)
     m = np.mean(X[:, idx])
     std = np.std(X[:, idx])
     X[:, idx] = (X[:, idx] - m) / std
@@ -25,8 +26,8 @@ def gradient_descent(X, y, W, learning_rate, iterations):
 file = "Data/generated_house_prices.csv"
 data = pd.read_csv(file)
 x = np.array(data.iloc[:, 0:(len(data.columns) - 1)])
-X = standardize_column(standardize_column(x, 0), 1)
-X = np.concatenate([np.ones((x.shape[0], 1)), x], axis=1)
+x = np.concatenate([np.ones((x.shape[0], 1)), x], axis=1)
+X = standardize_column(standardize_column(x, 1), 2)
 y = np.array(data[data.columns[-1]])
 biases = np.array([0.0, 0.0, 0.0])
 
@@ -36,6 +37,6 @@ iterations = 5000
 biases = gradient_descent(X, y, biases, learning_rate, iterations)
 print(f"Biases = {biases}")
 plt.scatter(x[:, 1], y, label="Data Points", color="blue")
-plt.scatter(x[:, 1], x.dot(biases), label="Gradient Descent Fit", color="red")
+plt.scatter(x[:, 1], X.dot(biases), label="Gradient Descent Fit", color="red", alpha=0.5)
 plt.legend()
 plt.show()
