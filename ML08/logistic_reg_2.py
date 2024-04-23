@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import seaborn as sns
 
 def sigmoid(X, W):
     return 1 / (1 + np.exp(-1 * X.dot(W)))
@@ -12,6 +13,21 @@ def print_cm(con_mat):
     recall = con_mat[1][1] / (con_mat[1][1] + con_mat[1][0])
     f1 = 2 * (precision * recall) / (precision + recall)
     print(f"TP: {con_mat[1][1]}, TN: {con_mat[0][0]}, FP: {con_mat[0][1]}, FN: {con_mat[1][0]} Accuracy: {accuracy}, precision: {precision}, recall: {recall}, f1: {f1}")
+
+def show_cm(labels, preds, con_mat):
+    #print(f"{con_mat}")
+    accuracy = (con_mat[0][0] + con_mat[1][1]) / (con_mat[0][0] + con_mat[1][1] + con_mat[1][0] + con_mat[0][1]) 
+    precision = con_mat[1][1] / (con_mat[1][1] + con_mat[0][1])
+    recall = con_mat[1][1] / (con_mat[1][1] + con_mat[1][0])
+    f1 = 2 * (precision * recall) / (precision + recall)
+    plt.subplot(1, 2, 2)
+    conf_mat = np.array(pd.crosstab(labels, preds, rownames=['Actual'], colnames=['Predicted']))
+    sns.heatmap(conf_mat, annot=True, fmt="d", cmap='Blues', cbar=False)
+    plt.title("confusion Matrix")
+
+    plt.suptitle(f"Accuracy: {accuracy:.2f}, Precision: {precision:.2f}, Recall: {recall:.2f}, F1 Score: {f1:.2f}")
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.show()
 
 def standardize_column(x, idx):
     X = np.copy(x)
@@ -39,18 +55,25 @@ def gradient_descent(X, y, W, learning_rate, iterations):
     return (W, np.array(loss_per))
 
 
-file = "Data/logistic_regression_data_standard.csv"
+file = "Data/email_data.csv"
 data = pd.read_csv(file)
 x = np.array(data.iloc[:, 0:(len(data.columns) - 1)])
 x = np.concatenate([np.ones((x.shape[0], 1)), x], axis=1)
-#X = standardize_column(standardize_column(x, 1), 2)
+X = standardize_column(standardize_column(x, 1), 2)
 y = np.array(data[data.columns[-1]])
 W = np.array([0.0 for _ in range(len(x[0, :]))])
 
 learning_rate = 0.01
 iterations = 1000
 
-(W, loss_per) = gradient_descent(x, y, W, learning_rate, iterations)
+(W, loss_per) = gradient_descent(X, y, W, learning_rate, iterations)
+m1 = np.mean(x[:, 1])
+std1 = np.std(x[:, 1])
+m2 = np.mean(x[:, 2])
+std2 = np.std(x[:, 2])
+print(m1, m2, std1, std2)
+#W @ [1, std1, std2]
+#W += [0, m1, m2]
 print(f"Weights = {W}")
 P = np.round(sigmoid(x, W))
 confusion_matrix = np.array([[0,0], [0,0]])
@@ -68,15 +91,16 @@ plt.show()
 
 colormap = np.array(["blue", "orange"])
 plt.scatter(x[:, 1], x[:, 2], label="Data", c=colormap[y.astype(int)])
-X = np.array([min(x[:, 1]), max(x[:, 1])])
-c = -W[0] / W[2]
-m = -W[1] / W[2]
-X1 = m * X + c
-plt.plot(X, X1, label="Decision boundary", lw=1, ls='--')
-plt.fill_between(X, X1, min(x[:, 2]), color='tab:blue', alpha=0.2)
-plt.fill_between(X, X1, max(x[:, 2]), color='tab:orange', alpha=0.2)
+x1 = [min(x[:, 1]), (-W[1] * min(x[:, 1]) - W[0]) / W[2]]
+x2 = [max(x[:, 1]), (-W[1] * max(x[:, 1]) - W[0]) / W[2]]
+
+plt.axline(x1, x2, label="Decision boundary", lw=1, ls='--')
+plt.fill_between(x1, x2, min(x[:, 2]), color='tab:blue', alpha=0.2)
+plt.fill_between(x1, x2, max(x[:, 2]), color='tab:orange', alpha=0.2)
 plt.xlabel("Feature 1")
 plt.ylabel("Feature 2")
 plt.title("Logistic Regression Decision Boundary")
 plt.legend()
 plt.show()
+
+show_cm(y, P, confusion_matrix)
