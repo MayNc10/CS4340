@@ -23,7 +23,7 @@ def show_cm(labels, preds, con_mat):
     plt.subplot(1, 2, 2)
     conf_mat = np.array(pd.crosstab(labels, preds, rownames=['Actual'], colnames=['Predicted']))
     sns.heatmap(conf_mat, annot=True, fmt="d", cmap='Blues', cbar=False)
-    plt.title("confusion Matrix")
+    plt.title("Confusion Matrix")
 
     plt.suptitle(f"Accuracy: {accuracy:.2f}, Precision: {precision:.2f}, Recall: {recall:.2f}, F1 Score: {f1:.2f}")
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -72,10 +72,11 @@ std1 = np.std(x[:, 1])
 m2 = np.mean(x[:, 2])
 std2 = np.std(x[:, 2])
 print(m1, m2, std1, std2)
-#W @ [1, std1, std2]
+print(f"Unscaled weights: {W}")
+#W = W @ [1, std1, std2]
 #W += [0, m1, m2]
-print(f"Weights = {W}")
-P = np.round(sigmoid(x, W))
+#print(f"Weights = {W}")
+P = np.round(sigmoid(X, W))
 confusion_matrix = np.array([[0,0], [0,0]])
 for idx in range(len(y)):
     confusion_matrix[int(P[idx])][int(y[idx])] += 1
@@ -89,18 +90,17 @@ plt.title("Logistic Regression Training")
 plt.legend()
 plt.show()
 
-colormap = np.array(["blue", "orange"])
-plt.scatter(x[:, 1], x[:, 2], label="Data", c=colormap[y.astype(int)])
-x1 = [min(x[:, 1]), (-W[1] * min(x[:, 1]) - W[0]) / W[2]]
-x2 = [max(x[:, 1]), (-W[1] * max(x[:, 1]) - W[0]) / W[2]]
+xlist = np.linspace(min(x[0]), max(x[0]), 100)
+colors = ["red", "green"]
 
-plt.axline(x1, x2, label="Decision boundary", lw=1, ls='--')
-plt.fill_between(x1, x2, min(x[:, 2]), color='tab:blue', alpha=0.2)
-plt.fill_between(x1, x2, max(x[:, 2]), color='tab:orange', alpha=0.2)
+plt.plot(x[:, 1], (0.5 - W[0] - W[1] * X[:, 1]) / W[2] * np.std(x[:, 2]) + np.mean(x[:, 2]))
+print(y.astype(int))
+plt.scatter(x[1], x[2], c=colors[y.astype(int)])
 plt.xlabel("Feature 1")
 plt.ylabel("Feature 2")
 plt.title("Logistic Regression Decision Boundary")
 plt.legend()
 plt.show()
 
+print(f"{P}\n{y}")
 show_cm(y, P, confusion_matrix)
