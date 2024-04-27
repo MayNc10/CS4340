@@ -91,11 +91,11 @@ plt.legend()
 plt.show()
 
 xlist = np.linspace(min(x[0]), max(x[0]), 100)
-colors = ["red", "green"]
+colors = np.array(["red", "green"])
 
-plt.plot(x[:, 1], (0.5 - W[0] - W[1] * X[:, 1]) / W[2] * np.std(x[:, 2]) + np.mean(x[:, 2]))
+plt.plot(x[:, 1], (0.5 - W[0] - W[1] * X[:, 1]) / W[2] * np.std(x[:, 2]) + np.mean(x[:, 2]), label="Decision Boundary")
 print(y.astype(int))
-plt.scatter(x[1], x[2], c=colors[y.astype(int)])
+plt.scatter(x[:, 1], x[:, 2], c=colors[y.astype(int)], label="Data Points")
 plt.xlabel("Feature 1")
 plt.ylabel("Feature 2")
 plt.title("Logistic Regression Decision Boundary")
