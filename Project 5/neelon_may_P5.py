@@ -47,7 +47,7 @@ def J(X, C):
         total_loss += minp
     return total_loss
 
-file = "Project 5/DataToCluster.csv"
+file = input("Please enter a path to a data file: ")
 data = pd.read_csv(file)
 X = np.array(data[data.columns[:2]])
 k = 2
